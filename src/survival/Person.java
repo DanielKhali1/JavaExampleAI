@@ -121,7 +121,7 @@ public class Person
 		}
 		
 		actionTaken = true;
-		System.out.println(name + " is discard food.");
+		System.out.println(name + " is discarding food.");
 		foodInventory.remove(foodIndex);
 	}
 	

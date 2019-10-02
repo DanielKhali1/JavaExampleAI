@@ -44,8 +44,8 @@ public class Template
 	 */
 	public static void main(String[] args)
 	{
-		Person survivor = new Person("Person");
-		
+		Person survivor = new Person("Vivian");
+				
 		while(survivor.isAlive())
 		{
 			System.out.println("Day " + survivor.getDaysSurvived());
@@ -53,7 +53,8 @@ public class Template
 			
 			// -------------------------- YOUR CODE STARTS HERE  --------------------------//
 			
-			
+
+
 			
 			// -------------------------- YOUR CODE ENDS HERE  ---------------------------//
 			

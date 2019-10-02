@@ -18,7 +18,7 @@ public class MeasureAI
 				System.out.println("Day " + survivor.getDaysSurvived());
 				
 				// -------------------------- YOUR CODE STARTS HERE  --------------------------//
-				
+
 				
 				
 				// -------------------------- YOUR CODE ENDS HERE  ---------------------------//
