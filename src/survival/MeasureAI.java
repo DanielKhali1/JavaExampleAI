@@ -6,25 +6,34 @@ public class MeasureAI
 	{
 		int sum = 0;
 		int iterations = 1000;
-		for(int i = 0; i < iterations; i++)
+		int minSurvival = Integer.MAX_VALUE;
+		int maxSurvival = Integer.MIN_VALUE;
+		
+		for(int j = 0; j < iterations; j++)
 		{
-			Person person = new Person("MeasureAI");
+			Person survivor = new Person("MeasureAI");
 			
-			while(person.isAlive())
+			while(survivor.isAlive())
 			{
-				System.out.println("Day " + person.getDaysSurvived());
+				System.out.println("Day " + survivor.getDaysSurvived());
 				
-				// ADD CODE HERE
+				// -------------------------- YOUR CODE STARTS HERE  --------------------------//
 				
 				
-				// CODE ENDS HERE
 				
-				person.nextDay();
+				// -------------------------- YOUR CODE ENDS HERE  ---------------------------//
+				
+				survivor.nextDay();
 			}
 			
-			sum += person.getDaysSurvived();
+			sum += survivor.getDaysSurvived();
+			minSurvival = Math.min(minSurvival, survivor.getDaysSurvived());
+			maxSurvival = Math.max(maxSurvival, survivor.getDaysSurvived());
 		}
 		
+		System.out.println();
 		System.out.println("Survival Average = " + (double) sum / iterations);
+		System.out.println("Survival Min = " + minSurvival);
+		System.out.println("Survival Max = " + maxSurvival);
 	}
 }
