@@ -33,15 +33,13 @@ public class Template
 	 * and has a chance of dropping [0,4] (inclusive) food.
 	 * the food dropped has a 60% chance of being non-poisonous
 	 * 
-	 * in total, your survivor has 5 actions,
+	 * in total, your survivor has 4 actions,
 	 * - eating
 	 * - resting
 	 * - drinking
 	 * - discarding food from inventory
 	 * 
 	 * of which your survivor can only do 1 per day.
-	 * 
-	 *
 	 */
 	
 	
