@@ -26,7 +26,10 @@ public class Template
 	 * To get more food, your survivor must hunt for food.
 	 * Hunting doesn't always reward your survivor with the same results.
 	 * It takes 20% of their energy away and has a chance of dropping [0,4] (inclusive) quantity of food.
-	 * The food dropped has a 40% chance of being poisonous.
+	 * The food dropped has a 25% chance of being poisonous.
+	 * 
+	 * Moreover, the survivor's inventory has a limited size of only 20 items. If you hunt with a full inventory, you will get nothing!
+	 * So make sure to keep your inventory's size in balance.
 	 * 
 	 * Your survivor can also drink to hydrate themselves, or rest to replenish their energy.
 	 * 

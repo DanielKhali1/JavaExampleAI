@@ -13,28 +13,51 @@ public class Person
 	private int satiation;
 	private int hydration;
 	private int energy;
-	private String name;
 	private int daysSurvived;
 	private boolean actionTaken;
-	private List<Boolean> foodInventory;
+	private final String name;
+	private final List<Boolean> inventory;
+	private final boolean showWarnings;
+	private static final int MAX_INVENTORY_SIZE = 20; 
 	
 	/**
 	 * Creates a new person with the provided name.
+	 * 
+	 * <p><b>
+	 * Fills the inventory with 10 items that have a 25% chance to be poisonous.
+	 * </b></p>
 	 * 
 	 * @param name - name of the person
 	 */
 	public Person(String name)
 	{
+		this(name, true);
+	}
+	
+	/**
+	 * Creates a new person with the provided name.
+	 * 
+	 * <p><b>
+	 * Fills the inventory with 10 items that have a 25% chance to be poisonous.
+	 * </b></p>
+	 * 
+	 * @param name - name of the person
+	 * @param showWarnings - whether to show warnings or not
+	 */
+	public Person(String name, boolean showWarnings)
+	{
 		this.name = name;
+		this.showWarnings = showWarnings;
 		actionTaken = false;
 		satiation = 100;
 		hydration = 100;
 		energy = 100;
 		daysSurvived = 0;
-		foodInventory = new ArrayList<>();
+		inventory = new ArrayList<>();
 		for(int i = 0; i < 10; i++)
 		{
-			foodInventory.add(Math.random() < 0.8); // 80% good, 20% bad
+			boolean isPoisonous = Math.random() <= 0.25; // 25% poisonous
+			addFood(isPoisonous);
 		}
 	}
 	
@@ -65,13 +88,13 @@ public class Person
 		
 		daysSurvived++;
 		actionTaken = false;
-		System.out.println(name + "'s Satiation: " + getSatiation() + "%\tHydration: " + getHydration() + "%\tEnergy: " + getEnergy() + "%\tFood Left: " + getFoodCount());
+		System.out.println(name + "'s Satiation: " + getSatiation() + "%\tHydration: " + getHydration() + "%\tEnergy: " + getEnergy() + "%\tInventory Size: " + getInventorySize() + " / " + getMaxInventorySize());
 		System.out.print("Inventory: [");
-		for(int i = 0; i < getFoodCount(); i++)
+		for(int i = 0; i < getInventorySize(); i++)
 		{
 			System.out.print(isHealthyFood(i) ? "Food" : "Poison");
 			
-			if(i != getFoodCount() - 1)
+			if(i != getInventorySize() - 1)
 				System.out.print(", ");
 		}
 		System.out.println("]\n");
@@ -79,38 +102,37 @@ public class Person
 	
 	/**
 	 * Discards the specified food index in the inventory. This will consume an action.
-	 * An index of 0 refers to the first item in the inventory. The index ranges from 0 to {@link #getFoodCount()}-1.
+	 * An index of 0 refers to the first item in the inventory. The index ranges from 0 to {@link #getInventorySize()}-1.
 	 * 
 	 * <p><b>
 	 * This costs no energy.
 	 * </b></p>
 	 * 
-	 * @param foodIndex - the index of the food to discard (zero-based)
+	 * @param inventoryIndex - the index of the inventory to discard (zero-based)
 	 */
-	
-	public void discardFood(int foodIndex)
+	public void discardFood(int inventoryIndex)
 	{
 		if(actionTaken)
 		{
-			System.out.println("[WARNING] Cannot discard food. Already did action.");
+			printWarning("Cannot discard food as an action has already been done on this day.");
 			return;
 		}
 		
-		if(getFoodCount() == 0)
+		if(getInventorySize() == 0)
 		{
-			System.out.println("[WARNING] Cannot discard food. Inventory is empty.");
+			printWarning("Cannot discard food as the inventory is empty.");
 			return;
 		}
 		
-		if(foodIndex < 0 || foodIndex >= getFoodCount())
+		if(inventoryIndex < 0 || inventoryIndex >= getInventorySize())
 		{
-			System.out.println("[WARNING] Cannot discard food. Index (" + foodIndex + ") is out of bounds.");
+			printWarning("Cannot discard food as the index (" + inventoryIndex + ") is out of bounds.");
 			return;
 		}
 		
 		actionTaken = true;
-		System.out.println(name + " is discarding " + (isHealthyFood(foodIndex)?"healthy food." : "poisonous food."));
-		foodInventory.remove(foodIndex);
+		System.out.println(name + " is discarding " + (isHealthyFood(inventoryIndex)?"healthy food." : "poisonous food."));
+		inventory.remove(inventoryIndex);
 	}
 	
 	/**
@@ -119,27 +141,27 @@ public class Person
 	 * </b></p>
 	 * 
 	 * Eats the specified food in the inventory. This will consume an action.
-	 * An index of 0 refers to the first item in the inventory. The index ranges from 0 to {@link #getFoodCount()}-1.
+	 * An index of 0 refers to the first item in the inventory. The index ranges from 0 to {@link #getInventorySize()}-1.
 	 * 
-	 * @param foodIndex - the index of the food to eat (zero-based)
+	 * @param inventoryIndex - the index of the food to eat (zero-based)
 	 */
-	public void eat(int foodIndex)
+	public void eat(int inventoryIndex)
 	{
 		if(actionTaken)
 		{
-			System.out.println("[WARNING] Cannot eat. Already did action.");
+			printWarning("Cannot eat as an action has already been done on this day.");
 			return;
 		}
 		
-		if(foodIndex < 0 || foodIndex >= getFoodCount())
+		if(inventoryIndex < 0 || inventoryIndex >= getInventorySize())
 		{
-			System.out.println("[WARNING] Cannot eat. Index (" + foodIndex + ") is out of bounds.");
+			printWarning("Cannot eat as the index (" + inventoryIndex + ") is out of bounds.");
 			return;
 		}
 		
 		actionTaken = true;
 		System.out.println(name + " is eating.");
-		boolean isHealthy = isHealthyFood(foodIndex);
+		boolean isHealthy = isHealthyFood(inventoryIndex);
 		if(isHealthy)
 		{
 			satiation = Math.min(100, satiation + 12);
@@ -149,7 +171,7 @@ public class Person
 			satiation = Math.max(0, satiation - 50);
 			System.out.println(name + " was poisoned by eating bad food!");
 		}
-		foodInventory.remove(foodIndex);
+		inventory.remove(inventoryIndex);
 		energy = Math.max(0, energy - 2);
 	}
 	
@@ -164,7 +186,7 @@ public class Person
 	{
 		if(actionTaken)
 		{
-			System.out.println("[WARNING] Cannot drink. Already did action.");
+			printWarning("Cannot drink as an action has already been done on this day.");
 			return;
 		}
 		
@@ -185,7 +207,7 @@ public class Person
 	{
 		if(actionTaken)
 		{
-			System.out.println("[WARNING] Cannot rest. Already did action.");
+			printWarning("Cannot rest as an action has already been done on this day.");
 			return;
 		}
 		
@@ -201,8 +223,12 @@ public class Person
 	 * 
 	 * <p><b>
 	 * The quantity of food gained can be 0 to 4.
-	 * The food itself has a 60% chance to be food and 40% chance to be poison.
+	 * The food itself has a 75% chance to be food and 25% chance to be poison.
 	 * </b></p>
+	 * 
+	 * <p><b><u>
+	 * Note: Inventory has a limited size, and if it is full, the hunt will yield nothing! Try discarding items.
+	 * </u></b></p>
 	 * 
 	 * This will consume an action.
 	 */
@@ -210,18 +236,57 @@ public class Person
 	{
 		if(actionTaken)
 		{
-			System.out.println("[WARNING] Cannot hunt. Already did action.");
+			printWarning("Cannot hunt as an action has already been done on this day.");
 			return;
 		}
 		
 		actionTaken = true;
-		int huntGainCount = (int) (Math.random() * 4);
+		int remainingSpace = getRemainingInventorySpace();
+		int huntGainCount = Math.min(remainingSpace, (int) (Math.random() * 4));
+		String huntGainString = "[";
 		for(int i = 0; i < huntGainCount; i++)
 		{
-			foodInventory.add(Math.random() < 0.6); // 60% good, 40% bad
+			boolean isPoisonous = Math.random() <= 0.25; // 25% poisonous
+			addFood(isPoisonous);
+			
+			if(isPoisonous)
+				huntGainString += "Poison";
+			else
+				huntGainString += "Food";
+			
+			if(i != huntGainCount - 1)
+				huntGainString += ", ";
 		}
+		huntGainString += "]";
 		energy = Math.max(0, energy - 20);
-		System.out.println(name + " is hunting. Found " + huntGainCount + " food.");
+		if(huntGainCount == 0)
+			System.out.println(name + " is hunting. Found no items.");
+		else
+			System.out.println(name + " is hunting. Found " + huntGainCount + " items of which are: " + huntGainString + ".");
+	}
+	
+	/**
+	 * Adds food to the inventory, if not full.
+	 * 
+	 * @param poisonous - true if the food is poisonous, false if healthy
+	 */
+	private void addFood(boolean poisonous)
+	{
+		if(isInventoryFull())
+			return;
+		
+		inventory.add(!poisonous);
+	}
+	
+	/**
+	 * Shows a warning message to the console only if the option to show warnings is enabled.
+	 * 
+	 * @param message - the warning message to display
+	 */
+	private void printWarning(String message)
+	{
+		if(showWarnings)
+			System.out.println("[WARNING] " + message);
 	}
 	
 	/**
@@ -290,6 +355,7 @@ public class Person
 	 * <li>{@link #drink()}</li>
 	 * <li>{@link #discardFood()} or {@link #discardFood(int)}</li>
 	 * <li>{@link #rest()}</li>
+	 * <li>{@link #hunt()}</li>
 	 * </ul>
 	 * </b></p>
 	 * 
@@ -336,7 +402,6 @@ public class Person
 	{
 		return energy;
 	}
-	
 
 	/**
 	 * Returns the name of the person.
@@ -347,7 +412,6 @@ public class Person
 	{
 		return name;
 	}
-	
 
 	/**
 	 * Returns the number of days survived by the person.
@@ -362,33 +426,53 @@ public class Person
 	/**
 	 * Returns an array of the current food inventory.
 	 * The array is of type boolean, where true represents healthy food and false represents poisonous food.
-	 * See {@link #isHealthyFood(int)}.
+	 * 
+	 * <p>
+	 * See {@link #isHealthyFood(int)} and {@link #isPoisonousFood(int)}.
+	 * </p>
 	 * 
 	 * @return the food inventory
 	 */
-	public boolean[] getFoodInventory()
+	public boolean[] getInventory()
 	{
-		boolean[] inventory = new boolean[foodInventory.size()];
-		for(int i = 0; i < foodInventory.size(); i++)
+		boolean[] clone = new boolean[inventory.size()];
+		for(int i = 0; i < inventory.size(); i++)
 		{
-			inventory[i] = foodInventory.get(i);
+			clone[i] = inventory.get(i);
 		}
-		return inventory;
+		return clone;
 	}
 	
 	/**
 	 * Returns true if the specified food is healthy, false otherwise.
+	 * Returns false if index is out of bounds.
 	 * 
-	 * @param foodIndex the food to check if healthy
+	 * @param inventoryIndex the food to check if healthy
 	 * 
 	 * @return true if healthy, false otherwise
 	 */
-	public boolean isHealthyFood(int foodIndex)
+	public boolean isHealthyFood(int inventoryIndex)
 	{
-		if(foodIndex < 0 || foodIndex >= getFoodCount())
+		if(inventoryIndex < 0 || inventoryIndex >= getInventorySize())
 			return false;
 		
-		return foodInventory.get(foodIndex);
+		return inventory.get(inventoryIndex);
+	}
+	
+	/**
+	 * Returns true if the specified food is poisonous, false otherwise.
+	 * Returns false if index is out of bounds.
+	 * 
+	 * @param inventoryIndex the food to check if poisonous
+	 * 
+	 * @return true if poisonous, false otherwise
+	 */
+	public boolean isPoisonousFood(int inventoryIndex)
+	{
+		if(inventoryIndex < 0 || inventoryIndex >= getInventorySize())
+			return false;
+		
+		return !inventory.get(inventoryIndex);
 	}
 	
 	/**
@@ -396,8 +480,38 @@ public class Person
 	 * 
 	 * @return size of inventory
 	 */
-	public int getFoodCount()
+	public int getInventorySize()
 	{
-		return foodInventory.size();
+		return inventory.size();
+	}
+	
+	/**
+	 * Returns the maximum allowable number of items in the inventory.
+	 * 
+	 * @return max size of inventory
+	 */
+	public int getMaxInventorySize()
+	{
+		return MAX_INVENTORY_SIZE;
+	}
+	
+	/**
+	 * Returns true if the inventory is full, false otherwise.
+	 * 
+	 * @return true if full, false otherwise
+	 */
+	public boolean isInventoryFull()
+	{
+		return getInventorySize() == getMaxInventorySize();
+	}
+	
+	/**
+	 * Returns how many more items can be fit in the inventory before it is full.
+	 * 
+	 * @return remaining space in inventory
+	 */
+	public int getRemainingInventorySpace()
+	{
+		return getMaxInventorySize() - getInventorySize();
 	}
 }
