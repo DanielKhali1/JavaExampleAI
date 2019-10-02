@@ -5,20 +5,19 @@ public class MeasureAI
 	public static void main(String[] args)
 	{
 		int sum = 0;
-		int iterations = 1000;
+		int iterations = 100;
 		int minSurvival = Integer.MAX_VALUE;
 		int maxSurvival = Integer.MIN_VALUE;
 		
 		for(int j = 0; j < iterations; j++)
 		{
-			Person survivor = new Person("MeasureAI");
+			Person survivor = new Person("GenericAI");
 			
 			while(survivor.isAlive())
 			{
 				System.out.println("Day " + survivor.getDaysSurvived());
 				
 				// -------------------------- YOUR CODE STARTS HERE  --------------------------//
-
 				
 				
 				// -------------------------- YOUR CODE ENDS HERE  ---------------------------//

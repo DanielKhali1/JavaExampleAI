@@ -25,8 +25,8 @@ public class Person
 	 */
 	public Person(String name)
 	{
-		actionTaken = false;
 		this.name = name;
+		actionTaken = false;
 		satiation = 100;
 		hydration = 100;
 		energy = 100;
@@ -66,7 +66,7 @@ public class Person
 		daysSurvived++;
 		actionTaken = false;
 		System.out.println(name + "'s Satiation: " + getSatiation() + "%\tHydration: " + getHydration() + "%\tEnergy: " + getEnergy() + "%\tFood Left: " + getFoodCount());
-		System.out.print("Food Inventory: [");
+		System.out.print("Inventory: [");
 		for(int i = 0; i < getFoodCount(); i++)
 		{
 			System.out.print(isHealthyFood(i) ? "Food" : "Poison");
@@ -75,18 +75,6 @@ public class Person
 				System.out.print(", ");
 		}
 		System.out.println("]\n");
-	}
-	
-	/**
-	 * Discards the first food in the inventory. This will consume an action.
-	 * 
-	 * <p><b>
-	 * This costs no energy.
-	 * </b></p>
-	 */
-	public void discardFood()
-	{
-		discardFood(0);
 	}
 	
 	/**
@@ -121,25 +109,13 @@ public class Person
 		}
 		
 		actionTaken = true;
-		System.out.println(name + " is discarding food.");
+		System.out.println(name + " is discarding " + (isHealthyFood(foodIndex)?"healthy food." : "poisonous food."));
 		foodInventory.remove(foodIndex);
 	}
 	
 	/**
 	 * <p><b>
-	 * Loses 2 energy and if food is healthy, gains 20 satiation, otherwise loses 50 satiation.
-	 * </b></p>
-	 * 
-	 * Eats the first food in the inventory. This will consume an action.
-	 */
-	public void eat()
-	{
-		eat(0);
-	}
-	
-	/**
-	 * <p><b>
-	 * Loses 2 energy and if food is healthy, gains 20 satiation, otherwise loses 50 satiation.
+	 * Loses 2 energy and if food is healthy, gains 12 satiation, otherwise loses 50 satiation.
 	 * </b></p>
 	 * 
 	 * Eats the specified food in the inventory. This will consume an action.
@@ -166,7 +142,7 @@ public class Person
 		boolean isHealthy = isHealthyFood(foodIndex);
 		if(isHealthy)
 		{
-			satiation = Math.min(100, satiation + 10);
+			satiation = Math.min(100, satiation + 12);
 		}
 		else
 		{
@@ -179,7 +155,7 @@ public class Person
 	
 	/**
 	 * <p><b>
-	 * Loses 1 energy and gains 10 hydration. 
+	 * Loses 1 energy and gains 13 hydration. 
 	 * </b></p>
 	 * 
 	 * This will consume an action.
@@ -193,14 +169,14 @@ public class Person
 		}
 		
 		actionTaken = true;
-		hydration = Math.min(100, hydration + 10);
+		hydration = Math.min(100, hydration + 13);
 		energy = Math.max(0, energy - 1);
 		System.out.println(name + " is drinking.");
 	}
 	
 	/**
 	 * <p><b>
-	 * Gains 10 energy. 
+	 * Gains 11 energy. 
 	 * </b></p>
 	 * 
 	 * This will consume an action.
@@ -214,7 +190,7 @@ public class Person
 		}
 		
 		actionTaken = true;
-		energy = Math.min(100, energy + 10);
+		energy = Math.min(100, energy + 11);
 		System.out.println(name + " is resting.");
 	}
 	
