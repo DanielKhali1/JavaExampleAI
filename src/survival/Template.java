@@ -49,13 +49,16 @@ public class Template
 	public static void main(String[] args)
 	{
 		Person survivor = new Person("Person");
-		
+				
 		while(survivor.isAlive())
 		{
+			
 			System.out.println("Day " + survivor.getDaysSurvived());
-			
-			
 			// -------------------------- YOUR CODE STARTS HERE  --------------------------//
+
+			
+			
+			
 			
 			
 			
